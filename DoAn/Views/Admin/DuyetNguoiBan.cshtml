@@ -1,0 +1,57 @@
+﻿@model IEnumerable<DoAn.Models.NguoiDung>
+@{
+    ViewBag.Title = "Duyệt người bán";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <h2 class="mb-4 text-success"><i class="fa fa-clipboard-check me-2"></i>Yêu cầu mở gian hàng</h2>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-light text-center py-5 border">
+                <i class="fa fa-coffee fa-3x mb-3 text-muted"></i>
+                <p class="lead">Hiện không có yêu cầu nào mới.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive bg-white shadow-sm p-4 rounded">
+                <table class="table table-hover align-middle">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Thông tin người đăng ký</th>
+                            <th>Liên hệ</th>
+                            <th class="text-center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="fw-bold fs-5">@item.HoTen</div>
+                                    <small class="text-muted text-uppercase">Mã: @item.MaND</small>
+                                </td>
+                                <td>
+                                    <div><i class="fa fa-envelope me-2 text-primary"></i>@item.Email</div>
+                                    <div><i class="fa fa-phone me-2 text-primary"></i>@item.SDT</div>
+                                </td>
+                                <td class="text-center">
+                                    @using (Html.BeginForm("PheDuyet", "Admin", FormMethod.Post))
+                                    {
+                                        <input type="hidden" name="maND" value="@item.MaND" />
+                                        <button type="submit" class="btn btn-success rounded-pill px-4 shadow-sm">
+                                            <i class="fa fa-check me-1"></i> Chấp nhận mở Shop
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

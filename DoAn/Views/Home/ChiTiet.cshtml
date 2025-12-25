@@ -1,0 +1,67 @@
+﻿@model DoAn.Models.DuLieuModel
+@using DoAn.Models;
+
+@{
+    ViewBag.Title = "Chi tiết sản phẩm";
+    ViewBag.BreadcrumbTitle = "Chi tiết sản phẩm";
+
+    // 👇 LẤY NGƯỜI DÙNG TỪ SESSION RA ĐỂ CHECK QUYỀN
+    var nguoiDung = Session["TaiKhoan"] as NguoiDung;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Ảnh sản phẩm -->
+        <div class="col-md-4">
+            <img src="@Url.Content("~/img/" + Model.Product.HinhAnh)" class="card-img-top" alt="@Model.Product.Ten">
+        </div>
+
+        <!-- Thông tin sản phẩm -->
+        <div class="col-md-8">
+            <h3>@Model.Product.Ten</h3>
+            <h4>@Model.Product.GiaBan VNĐ</h4>
+            <p>
+                @Model.Product.MoTa
+            </p>
+            <div class="mb-3">
+                @* --- BẮT ĐẦU ĐOẠN CODE KIỂM TRA QUYỀN (SỬ DỤNG SESSION) --- *@
+
+                @if (nguoiDung != null && (nguoiDung.QuyenHan.Trim() == "NguoiBan" || nguoiDung.QuyenHan.Trim() == "Admin"))
+                {
+                    <button class="btn btn-secondary disabled" style="cursor: not-allowed; opacity: 0.6;">
+                        <i class="fa fa-ban me-2"></i>Bạn không thể mua hàng
+                    </button>
+                }
+                else
+                {
+                    <a href="@Url.Action("ThemGioHang", "GioHang", new { ms = Model.Product.MaSanPham, strURL = Request.Url.ToString() })" class="btn btn-success">
+                        <i class="fa fa-shopping-bag me-2"></i>Thêm vào giỏ
+                    </a>
+                }
+
+                @* --- KẾT THÚC ĐOẠN CODE KIỂM TRA QUYỀN --- *@
+
+                <a href="@Url.Action("SanPham","Home")" class="btn btn-outline-secondary ms-2">Quay lại</a>
+            </div>
+    </div>
+
+    <!-- Sản phẩm liên quan -->
+    <div class="mt-5">
+        <h5>Sản phẩm liên quan</h5>
+        <div class="row">
+            @foreach (var item in Model.Products)
+            {
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <img src="@Url.Content("~/img/" + item.HinhAnh)" style="height: 300px; width: 360px" class="card-img-top" alt="@item.Ten">
+                        <div class="card-body">
+                            <h6 class="card-title">@item.Ten</h6>
+                            <p>@item.GiaBan VNĐ</p>
+                            <a href="@Url.Action("ChiTiet", "Home", new { id = item.MaSanPham })" class="btn btn-success btn-sm">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

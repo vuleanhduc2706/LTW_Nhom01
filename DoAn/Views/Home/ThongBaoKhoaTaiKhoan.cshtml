@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "Tài khoản bị khóa";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5 text-center">
+    <div class="card shadow-sm border-danger mx-auto" style="max-width: 600px;">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0 text-uppercase fw-bold">Thông báo</h4>
+        </div>
+        <div class="card-body p-5">
+            <div class="mb-4">
+                <i class="fa fa-lock fa-5x text-danger"></i>
+            </div>
+            <h3 class="card-title text-danger fw-bold">Tài khoản đã bị khóa!</h3>
+            <p class="card-text mt-3 fs-5">
+                Rất tiếc, tài khoản của bạn đã bị Admin vô hiệu hóa do vi phạm chính sách hoặc vấn đề bảo mật.
+            </p>
+            <div class="alert alert-warning mt-4">
+                Vui lòng liên hệ Admin để được hỗ trợ mở khóa.
+            </div>
+
+            <a href="@Url.Action("DangNhap", "Home")" class="btn btn-primary px-4 mt-3">
+                <i class="fa fa-sign-in-alt me-2"></i> Quay lại trang Đăng nhập
+            </a>
+        </div>
+    </div>
+</div>

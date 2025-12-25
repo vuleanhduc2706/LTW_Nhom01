@@ -1,0 +1,194 @@
+﻿@model IEnumerable<DoAn.Models.SanPham>
+
+@{
+    ViewBag.Title = "Kho hàng của tôi";
+}
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="section-header text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
+            <h1 class="display-5 mb-3">Kho hàng của tôi</h1>
+            <p>Quản lý danh sách bánh, loại bánh và trạng thái kinh doanh.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4 bg-light p-3 rounded shadow-sm">
+                    <div class="d-flex align-items-center">
+                        <span class="fw-bold me-3 text-primary"><i class="fa fa-filter me-1"></i>Lọc trạng thái:</span>
+
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="locTrangThai" id="all" value="all" checked>
+                            <label class="form-check-label" for="all">Tất cả</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="locTrangThai" id="active" value="Đang bán">
+                            <label class="form-check-label" for="active">Đang bán</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="locTrangThai" id="inactive" value="Ngừng bán">
+                            <label class="form-check-label" for="inactive">Ngừng bán (Hết hàng)</label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="@Url.Action("ThemSanPham", "QuanLy")" class="btn btn-primary rounded-pill py-2 px-4 me-2">
+                            <i class="fa fa-plus me-2"></i>Thêm bánh mới
+                        </a>
+                        <button type="button" id="btnDeleteSelected" class="btn btn-danger rounded-pill py-2 px-4 shadow-sm">
+                            <i class="fa fa-trash-alt me-2"></i>Xóa mục đã chọn
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive bg-white shadow-sm p-4 rounded">
+                    <table class="table table-hover align-middle" id="productTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAll" class="form-check-input">
+                                </th>
+                                <th>Mã SP</th>
+                                <th>Hình ảnh</th>
+                                <th>Thông tin bánh</th>
+                                <th>Giá bán</th>
+                                <th>Trạng thái</th>
+                                <th class="text-center" style="width: 200px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                // Tự động tính toán trạng thái dựa trên số lượng để Radio lọc cho chuẩn
+                                var statusHienTai = (item.SoLuongTon > 0) ? "Đang bán" : "Ngừng bán";
+
+                                // Nếu bị Admin gỡ, gán trạng thái riêng để filter vẫn hoạt động (hoặc ẩn đi tùy ý)
+                                if (item.TrangThai == "Bị gỡ bởi Admin") { statusHienTai = "BiGo"; }
+
+                                <tr class="product-row" data-status="@statusHienTai">
+                                    <td>
+                                        <input type="checkbox" class="form-check-input item-checkbox" value="@item.MaSanPham">
+                                    </td>
+                                    <td><strong>@item.MaSanPham</strong></td>
+                                    <td>
+                                        <img class="rounded shadow-sm" src="@Url.Content("~/img/" + item.HinhAnh)" style="width: 70px; height: 70px; object-fit: cover;" alt="@item.Ten">
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold">@item.Ten</div>
+                                        <small class="badge bg-light border text-primary">@item.TenDanhMuc</small>
+                                    </td>
+                                    <td class="text-danger fw-bold">@string.Format("{0:N0}", item.GiaBan) đ</td>
+
+                                    <td>
+                                        @if (item.TrangThai == "Bị gỡ bởi Admin")
+                                        {
+                                            // ƯU TIÊN 1: Nếu bị Admin gỡ
+                                            <span class="badge bg-danger"><i class="fa fa-ban me-1"></i>Đã bị gỡ</span>
+                                        }
+                                        else if (item.SoLuongTon > 0)
+                                        {
+                                            // ƯU TIÊN 2: Đang bán bình thường
+                                            <span class="text-success"><i class="fa fa-check-circle me-1"></i>Đang bán</span>
+                                            <br />
+                                            <small class="text-muted">(Còn: @item.SoLuongTon)</small>
+                                        }
+                                        else
+                                        {
+                                            // ƯU TIÊN 3: Hết hàng
+                                            <span class="text-muted"><i class="fa fa-times-circle me-1"></i>Hết hàng</span>
+                                        }
+                                    </td>
+
+                                    <td class="text-center">
+                                        @if (item.TrangThai == "Bị gỡ bởi Admin")
+                                        {
+                                            // HIỂN THỊ THÔNG BÁO LỖI
+                                            <div class="alert alert-danger p-1 m-0 text-start" style="font-size: 11px; line-height: 1.2;">
+                                                <i class="fa fa-exclamation-triangle"></i> <strong>VI PHẠM!</strong><br />
+                                                Sản phẩm đã bị Admin gỡ. Vui lòng liên hệ Admin.
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            // HIỂN THỊ NÚT THAO TÁC BÌNH THƯỜNG
+                                            <a href="@Url.Action("SuaSanPham", "QuanLy", new { id = item.MaSanPham })" class="btn btn-sm btn-outline-warning me-1" title="Sửa">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                            using (Html.BeginForm("XoaSanPham", "QuanLy", new { id = item.MaSanPham }, FormMethod.Post, new { style = "display:inline;" }))
+                                            {
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn có chắc muốn xóa bánh này?')" title="Xóa">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // 1. Xử lý Radio Button lọc trạng thái
+            $('input[name="locTrangThai"]').change(function () {
+                var selectedValue = $(this).val();
+
+                $('.product-row').each(function () {
+                    var rowStatus = $(this).data('status');
+
+                    if (selectedValue === "all" || rowStatus === selectedValue) {
+                        $(this).fadeIn(300);
+                    } else {
+                        $(this).fadeOut(300);
+                    }
+                });
+            });
+
+            // 2. Xử lý Checkbox chọn tất cả
+            $('#selectAll').click(function () {
+                $('.item-checkbox').prop('checked', this.checked);
+            });
+
+            // 3. Xử lý xóa hàng loạt qua Ajax (ĐÃ SỬA CHUẨN)
+            $('#btnDeleteSelected').click(function () {
+                var selectedIds = [];
+
+                // Lấy giá trị từ thuộc tính value của checkbox
+                $('.item-checkbox:checked').each(function () {
+                    selectedIds.push($(this).val());
+                });
+
+                if (selectedIds.length > 0) {
+                    if (confirm("Xác nhận xóa " + selectedIds.length + " sản phẩm đã chọn?")) {
+                        // Gửi Ajax về Controller
+                        $.ajax({
+                            url: '/QuanLy/XoaHangLoat', // Đảm bảo URL này đúng với Controller của bạn
+                            type: 'POST',
+                            data: { ids: selectedIds },
+                            success: function (res) {
+                                if (res.success) {
+                                    alert("Đã xóa thành công!");
+                                    location.reload();
+                                } else {
+                                    // Nếu server trả về lỗi (ví dụ: chưa đăng nhập)
+                                    alert(res.message ? res.message : "Có lỗi xảy ra, vui lòng thử lại.");
+                                }
+                            },
+                            error: function () {
+                                alert("Lỗi kết nối Server! Vui lòng kiểm tra lại đường truyền.");
+                            }
+                        });
+                    }
+                } else {
+                    alert("Cậu hãy chọn ít nhất một sản phẩm để xóa nhé!");
+                }
+            });
+        });
+    </script>
+}

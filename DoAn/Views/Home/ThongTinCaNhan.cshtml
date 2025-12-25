@@ -1,0 +1,77 @@
+﻿@model DoAn.Models.ProfileViewModel
+@{
+    ViewBag.Title = "Thông tin cá nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="bg-light rounded p-5 shadow-sm">
+                    <div class="section-header text-center mx-auto mb-4">
+                        <h1 class="display-6">Hồ sơ của tôi</h1>
+                    </div>
+
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success">@TempData["Success"]</div>
+                    }
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["Error"]</div>
+                    }
+
+                    @using (Html.BeginForm("CapNhatThongTin", "Home", FormMethod.Post))
+                    {
+                        @Html.HiddenFor(m => m.MaND)
+                        @Html.HiddenFor(m => m.QuyenHan)
+
+                        <h5 class="text-primary mb-3"><i class="fa fa-user me-2"></i>Thông tin tài khoản</h5>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-12">
+                                <label class="form-label">Họ và Tên</label>
+                                @Html.TextBoxFor(m => m.HoTen, new { @class = "form-control", required = "required" })
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Số điện thoại</label>
+                                @Html.TextBoxFor(m => m.SDT, new { @class = "form-control", required = "required" })
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", required = "required" })
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Địa chỉ (Giao hàng)</label>
+                                @Html.TextAreaFor(m => m.DiaChi, new { @class = "form-control", rows = "2", placeholder = "Nhập địa chỉ nhà riêng để nhận hàng..." })
+                            </div>
+                        </div>
+
+                        if (Model.QuyenHan.Trim() == "NguoiBan")
+                        {
+                            <hr />
+                            <h5 class="text-success mb-3 mt-4"><i class="fa fa-store me-2"></i>Thông tin Cửa hàng</h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-12">
+                                    <label class="form-label">Tên Cửa Hàng</label>
+                                    @Html.TextBoxFor(m => m.TenCuaHang, new { @class = "form-control", required = "required" })
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label">Địa chỉ Cửa Hàng</label>
+                                    @Html.TextAreaFor(m => m.DiaChiCuaHang, new { @class = "form-control", rows = "2", placeholder = "Nhập địa chỉ shop..." })
+                                </div>
+                                <div class="col-md-12">
+                                    <small class="text-muted fst-italic">* Số điện thoại shop sẽ sử dụng số điện thoại cá nhân ở trên.</small>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary rounded-pill py-2 px-5">Lưu thay đổi</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

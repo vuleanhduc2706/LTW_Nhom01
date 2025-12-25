@@ -1,0 +1,88 @@
+﻿@model DoAn.Models.SanPham
+
+@{
+    ViewBag.Title = "Thêm bánh mới";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 shadow-sm p-4 bg-white rounded">
+            <h2 class="text-center mb-4 text-primary">Thêm Sản Phẩm Mới</h2>
+
+            @using (Html.BeginForm("ThemSanPham", "QuanLy", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tên bánh <span class="text-danger">*</span></label>
+                    <input type="text" name="Ten" class="form-control" required placeholder="Ví dụ: Bánh Mì Bơ Tỏi" />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Danh mục <span class="text-danger">*</span></label>
+                        @if (ViewBag.MaDanhMuc != null)
+                        {
+                            @Html.DropDownList("MaDanhMuc", (IEnumerable<SelectListItem>)ViewBag.MaDanhMuc, "-- Chọn loại --", new { @class = "form-select", required = "required" })
+                        }
+                        else
+                        {
+                            <select class="form-select" disabled><option>Lỗi tải danh mục</option></select>
+                        }
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Giá bán (VNĐ) <span class="text-danger">*</span></label>
+                        <input type="number" name="GiaBan" class="form-control" required step="1000" min="0" />
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Số lượng kho <span class="text-danger">*</span></label>
+                        <input type="number" name="SoLuongTon" class="form-control" required value="50" min="1" placeholder="Nhập số lượng" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Hình ảnh sản phẩm <span class="text-danger">*</span></label>
+                    <input type="file" name="uploadAnh" class="form-control" accept="image/*" required onchange="previewImage(this);" />
+                    <div class="mt-2 text-center">
+                        <img id="preview" src="#" alt="Xem trước ảnh" class="d-none img-thumbnail" style="max-height: 200px; border-radius: 10px;" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Mô tả bánh</label>
+                    <textarea name="MoTa" class="form-control" rows="4"></textarea>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary px-5 rounded-pill shadow-sm">
+                        <i class="fa fa-save"></i> Lưu sản phẩm
+                    </button>
+                    <a href="@Url.Action("KhoHang", "QuanLy")" class="btn btn-outline-secondary px-5 rounded-pill shadow-sm">Hủy</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewImage(input) {
+        var preview = document.getElementById('preview');
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            preview.src = "#";
+            preview.classList.add('d-none');
+            preview.style.display = 'none';
+        }
+    }
+</script>

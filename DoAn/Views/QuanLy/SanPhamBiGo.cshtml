@@ -1,0 +1,62 @@
+﻿@model IEnumerable<DoAn.Models.SanPham>
+@{
+    ViewBag.Title = "Sản phẩm bị gỡ bỏ";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Sử dụng layout người dùng
+}
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center mx-auto mb-5" style="max-width: 600px;">
+            <h1 class="display-6 mb-3 text-danger"><i class="fa fa-exclamation-triangle"></i> Sản phẩm bị gỡ bỏ</h1>
+            <p class="text-muted">Danh sách các sản phẩm đã bị Admin gỡ xuống do vi phạm chính sách hoặc hết hạn.</p>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-success text-center">
+                Chúc mừng! Shop của bạn không có sản phẩm nào bị vi phạm.
+            </div>
+            <div class="text-center">
+                <a href="@Url.Action("KhoHang", "QuanLy")" class="btn btn-primary rounded-pill">Quay lại Kho hàng</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive bg-white shadow-sm p-4 rounded border border-danger">
+                <table class="table table-hover align-middle">
+                    <thead class="bg-danger text-white">
+                        <tr>
+                            <th>Mã SP</th>
+                            <th>Hình ảnh</th>
+                            <th>Tên Sản Phẩm</th>
+                            <th>Trạng Thái</th>
+                            <th>Thông báo từ Admin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.MaSanPham</td>
+                                <td>
+                                    <img src="~/img/@item.HinhAnh" style="width: 60px; height: 60px; object-fit: cover;" class="rounded" />
+                                </td>
+                                <td class="fw-bold text-secondary">@item.Ten</td>
+                                <td>
+                                    <span class="badge bg-danger">@item.TrangThai</span>
+                                </td>
+                                <td>
+                                    <div class="alert alert-warning p-2 m-0" style="font-size: 13px;">
+                                        <strong><i class="fa fa-ban"></i> Sản phẩm này đã bị ẩn!</strong><br />
+                                        Người mua và bạn đều không thể thấy sản phẩm này trên sàn.
+                                        Vui lòng liên hệ: <a href="mailto:admin@cakey.com">admin@cakey.com</a> để khiếu nại.
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

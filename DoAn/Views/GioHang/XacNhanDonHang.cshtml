@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Đặt hàng thành công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <i class="fa fa-check-circle text-primary" style="font-size: 80px;"></i>
+
+                <h1 class="display-3 mt-4">Cảm Ơn!</h1>
+                <h2 class="mb-4">Bạn Đã Đặt Hàng Thành Công</h2>
+
+                <p class="mb-4 fs-5">
+                    Đơn hàng của bạn đã được lưu vào hệ thống. <br />
+                    Chúng tôi sẽ sớm liên hệ để giao những chiếc bánh tươi ngon nhất đến tay bạn.
+                </p>
+
+                <div class="mt-5">
+                    <a class="btn btn-primary rounded-pill py-3 px-5" href="@Url.Action("Index", "Home")">
+                        <i class="fa fa-home me-2"></i>Về Trang Chủ
+                    </a>
+                    <a class="btn btn-outline-secondary rounded-pill py-3 px-5 ms-3" href="@Url.Action("SanPham", "Home")">
+                        Tiếp tục mua hàng
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

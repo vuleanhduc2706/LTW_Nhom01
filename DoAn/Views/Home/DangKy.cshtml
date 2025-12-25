@@ -1,0 +1,102 @@
+﻿@model DoAn.Models.NguoiDung
+@{
+    ViewBag.Title = "Đăng ký tài khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 shadow p-4 bg-white rounded">
+            <h2 class="text-center text-primary mb-4">Đăng Ký Thành Viên</h2>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">@ViewBag.Error</div>
+            }
+
+            @using (Html.BeginForm("DangKy", "Home", FormMethod.Post))
+            {
+                <div class="mb-3">
+                    <label class="fw-bold">Họ và Tên</label>
+                    <input type="text" name="HoTen" class="form-control" required placeholder="Nhập họ tên đầy đủ" />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold">Số điện thoại</label>
+                        <input type="text" name="SDT" class="form-control" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="fw-bold">Email</label>
+                        <input type="email" name="Email" class="form-control" required />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="fw-bold">Mật khẩu</label>
+                    <input type="password" name="MatKhau" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="fw-bold">Nhập lại mật khẩu</label>
+                    <input type="password" name="repassword" class="form-control" required />
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Bạn muốn trở thành:</label>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="w-100">
+                                <input type="radio" name="QuyenHan" value="NguoiMua" class="card-input-element d-none" checked />
+                                <div class="card card-body bg-light d-flex flex-row align-items-center cursor-pointer item-role">
+                                    <div class="me-3"><i class="fa fa-shopping-basket fa-2x text-primary"></i></div>
+                                    <div>
+                                        <div class="fw-bold">Người Mua</div>
+                                        <small class="text-muted">Mua sắm bánh</small>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="w-100">
+                                <input type="radio" name="QuyenHan" value="NguoiBan" class="card-input-element d-none" />
+                                <div class="card card-body bg-light d-flex flex-row align-items-center cursor-pointer item-role">
+                                    <div class="me-3"><i class="fa fa-store fa-2x text-success"></i></div>
+                                    <div>
+                                        <div class="fw-bold">Người Bán</div>
+                                        <small class="text-muted">Mở gian hàng</small>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow">ĐĂNG KÝ NGAY</button>
+                </div>
+
+                <div class="text-center mt-3">
+                    <span>Đã có tài khoản? </span><a href="@Url.Action("DangNhap")" class="fw-bold">Đăng nhập</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .cursor-pointer {
+        cursor: pointer;
+    }
+    /* Hiệu ứng chọn radio "tối lại" */
+    .card-input-element:checked + .item-role {
+        background-color: #dee2e6 !important;
+        border: 2px solid #0d6efd;
+        box-shadow: inset 0 0 8px rgba(0,0,0,0.1);
+    }
+
+    .item-role:hover {
+        background-color: #f1f3f5 !important;
+        transition: 0.2s;
+    }
+</style>

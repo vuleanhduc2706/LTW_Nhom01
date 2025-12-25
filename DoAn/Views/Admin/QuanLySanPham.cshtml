@@ -1,0 +1,66 @@
+﻿@model IEnumerable<DoAn.Models.SanPham>
+@{
+    ViewBag.Title = "Quản lý sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mt-3">Quản lý sản phẩm toàn sàn</h2>
+
+<table class="table table-bordered table-hover mt-3">
+    <thead class="table-dark">
+        <tr>
+            <th>Hình</th>
+            <th>Tên Bánh</th>
+            <th>Cửa Hàng</th>
+            <th>Giá</th>
+            <th>Trạng Thái</th>
+            <th>Hành Động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td><img src="~/img/@item.HinhAnh" style="width:50px;height:50px;object-fit:cover;" /></td>
+                <td>
+                    @item.Ten <br />
+                    <small class="text-muted">@item.TenDanhMuc</small>
+                </td>
+                <td>@item.MoTa</td>
+                <td>@item.GiaBan.ToString("#,##0") đ</td>
+                <td>
+                    @if (item.TrangThai == "Bị gỡ bởi Admin")
+                    {
+                        <span class="badge bg-danger">Đã bị gỡ</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">@item.TrangThai</span>
+                    }
+                </td>
+                <td>
+                    @if (item.TrangThai == "Bị gỡ bởi Admin")
+                    {
+                        using (Html.BeginForm("KhoiPhucSanPham", "Admin", FormMethod.Post, new { onsubmit = "return confirm('Cho phép hiển thị lại sản phẩm này?');" }))
+                        {
+                            <input type="hidden" name="id" value="@item.MaSanPham" />
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fa fa-undo"></i> Khôi phục
+                            </button>
+                        }
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("GoSanPhamByAdmin", "Admin", FormMethod.Post, new { onsubmit = "return confirm('Gỡ sản phẩm này khỏi hệ thống? Người bán sẽ không còn thấy nó.');" }))
+                        {
+                            <input type="hidden" name="id" value="@item.MaSanPham" />
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fa fa-ban"></i> Gỡ xuống
+                            </button>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

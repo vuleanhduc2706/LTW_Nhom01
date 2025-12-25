@@ -1,0 +1,29 @@
+﻿@model DoAn.Models.DuLieu
+
+@{
+    // Lấy ID trực tiếp từ trên thanh địa chỉ xuống để so sánh
+    var currentId = Request.QueryString["id"];
+}
+
+<ul class="nav nav-pills d-inline-flex justify-content-end mb-5">
+
+    <li class="nav-item me-2">
+        <a class="btn btn-outline-primary border-2 @(string.IsNullOrEmpty(currentId) ? "active" : "")"
+           href="@Url.Action("SanPham", "Home")">
+            Tất cả
+        </a>
+    </li>
+
+    @foreach (var item in Model.DanhSachDanhMuc)
+    {
+        // Kiểm tra: Nếu Mã danh mục trùng với URL thì thêm class active
+        var activeClass = (currentId == item.MaDanhMuc) ? "active" : "";
+
+        <li class="nav-item me-2">
+            <a class="btn btn-outline-primary border-2 @activeClass"
+               href="@Url.Action("SanPham", "Home", new { id = item.MaDanhMuc })">
+                @item.Ten
+            </a>
+        </li>
+    }
+</ul>

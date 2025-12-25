@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "Đăng nhập";
+    ViewBag.BreadcrumbTitle = "Chào mừng quay trở lại";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow p-4 border-0 rounded">
+                <h2 class="text-center mb-4">Đăng nhập</h2>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger shadow-sm">
+                        <i class="fa fa-exclamation-triangle me-2"></i> @ViewBag.Error
+                    </div>
+                }
+
+                <form action="@Url.Action("DangNhap", "Home")" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Email hoặc Số điện thoại</label>
+                        <input type="text" name="account" class="form-control" placeholder="Nhập Email hoặc Số điện thoại" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mật khẩu</label>
+                        <input type="password" name="matkhau" class="form-control" placeholder="Mật khẩu" required>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remember">
+                            <label class="form-check-label" for="remember">Ghi nhớ</label>
+                        </div>
+                        <a href="@Url.Action("QuenMatKhau", "Home")" class="text-decoration-none text-primary">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-bold text-white shadow-sm">ĐĂNG NHẬP</button>
+                </form>
+
+                <div class="mt-4 text-center">
+                    <p class="mb-0">Chưa có tài khoản? <a href="@Url.Action("DangKy", "Home")" class="text-primary fw-bold">Tạo tài khoản mới</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = "Báo cáo doanh thu";
+}
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="row g-4 mb-5">
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="bg-light text-center h-100 p-5 shadow-sm rounded">
+                    <i class="fa fa-wallet fa-3x text-primary mb-4"></i>
+                    <h4 class="mb-3">Tổng doanh thu</h4>
+                    <h2 class="text-primary">@string.Format("{0:N0}", ViewBag.TongTien) <small>VNĐ</small></h2>
+                    <p class="mb-0">Dựa trên các đơn hàng đã thanh toán</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="bg-light text-center h-100 p-5 shadow-sm rounded">
+                    <i class="fa fa-shopping-cart fa-3x text-success mb-4"></i>
+                    <h4 class="mb-3">Đơn hàng mới</h4>
+                    <h2 class="text-success">@ViewBag.SoDonHang</h2>
+                    <p class="mb-0">Đơn hàng cần xử lý trong ngày</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="bg-light text-center h-100 p-5 shadow-sm rounded">
+                    <i class="fa fa-star fa-3x text-warning mb-4"></i>
+                    <h4 class="mb-3">Sản phẩm bán chạy</h4>
+                    <h2 class="text-warning">#1</h2>
+                    <p class="mb-0">@ViewBag.SpBanChay</p>
+                </div>
+            </div>
+        </div>
+
+        @* Biểu đồ hoặc danh sách đơn hàng gần đây *@
+        <div class="bg-white p-4 shadow-sm rounded">
+            <h5 class="mb-4"><i class="fa fa-history me-2"></i>Lịch sử giao dịch gần đây</h5>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Mã Đơn</th>
+                            <th>Ngày Giao</th>
+                            <th>Giá Trị Đơn</th>
+                            <th class="text-center">Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.LichSu != null && ((List<DoAn.Models.DonHang>)ViewBag.LichSu).Count > 0)
+                        {
+                            foreach (var dh in (List<DoAn.Models.DonHang>)ViewBag.LichSu)
+                            {
+                                <tr>
+                                    <td><span class="fw-bold text-dark">@dh.MaDon</span></td>
+                                    <td>@dh.NgayDat.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td class="text-danger fw-bold">@dh.ThanhTien.ToString("N0") đ</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success-soft text-success border border-success px-3">
+                                            <i class="fa fa-check me-1"></i>Thành công
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">Chưa có giao dịch nào hoàn thành trong hệ thống.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-end mt-2">
+                <small class="text-muted italic">* Dữ liệu được cập nhật theo thời gian thực</small>
+            </div>
+        </div>
+        
+    </div>
+</div>
+<style>
+    .bg-success-soft {
+        background-color: #e8f5e9;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+</style>

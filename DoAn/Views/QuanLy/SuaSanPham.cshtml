@@ -1,0 +1,95 @@
+﻿@model DoAn.Models.SanPham
+@{
+    ViewBag.Title = "Chỉnh sửa sản phẩm";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 shadow p-4 bg-white rounded">
+            <h2 class="text-center mb-4">Chỉnh Sửa Sản Phẩm</h2>
+
+            @using (Html.BeginForm("SuaSanPham", "QuanLy", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.MaSanPham)
+                <input type="hidden" name="anhCu" value="@Model.HinhAnh" />
+
+                <div class="mb-3">
+                    <label class="fw-bold">Tên bánh</label>
+                    @Html.TextBoxFor(m => m.Ten, new { @class = "form-control", required = "required" })
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="fw-bold">Danh mục</label>
+                        @Html.DropDownListFor(m => m.MaDanhMuc, (IEnumerable<SelectListItem>)ViewBag.MaDanhMuc, new { @class = "form-select" })
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="fw-bold">Giá bán</label>
+                        @Html.TextBoxFor(m => m.GiaBan, new { @class = "form-control", type = "number" })
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="fw-bold">Số lượng tồn</label>
+                        @Html.TextBoxFor(m => m.SoLuongTon, new { @class = "form-control", type = "number", min = "0", id = "txtSoLuong" })
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="fw-bold">Trạng thái kinh doanh</label>
+                    <select class="form-select" name="TrangThai" id="ddlTrangThai">
+                        <option value="Đang bán" @(Model.TrangThai == "Đang bán" ? "selected" : "")>Đang bán</option>
+                        <option value="Ngừng bán" @(Model.TrangThai == "Ngừng bán" ? "selected" : "")>Ngừng bán (Hết hàng)</option>
+
+                        @if (Model.TrangThai == "Bị gỡ bởi Admin")
+                        {
+                            <option value="Bị gỡ bởi Admin" selected>Bị gỡ bởi Admin (Vi phạm)</option>
+                        }
+                    </select>
+                    <small class="text-muted fst-italic" id="msgStatus"></small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="fw-bold">Hình ảnh hiện tại</label><br />
+                    <img src="~/img/@Model.HinhAnh" style="height: 100px; border-radius: 5px;" class="mb-2" />
+                    <input type="file" name="uploadAnh" class="form-control" accept="image/*" />
+                    <small class="text-muted">(Để trống nếu không muốn đổi ảnh)</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="fw-bold">Mô tả</label>
+                    @Html.TextAreaFor(m => m.MoTa, new { @class = "form-control", rows = "3" })
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success px-5">Cập nhật</button>
+                    <a href="@Url.Action("KhoHang", "QuanLy")" class="btn btn-secondary px-5">Quay lại</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('txtSoLuong').addEventListener('input', function () {
+        var qty = parseInt(this.value);
+        var statusSelect = document.getElementById('ddlTrangThai');
+        var msg = document.getElementById('msgStatus');
+
+        if (qty === 0) {
+            // Nếu số lượng về 0 -> Tự động chuyển thành Ngừng bán
+            statusSelect.value = "Ngừng bán";
+            msg.innerText = "* Số lượng bằng 0, hệ thống tự động chuyển sang 'Ngừng bán'.";
+            msg.className = "text-danger fst-italic";
+        } else if (qty > 0) {
+            // Nếu nhập số lượng > 0 -> Gợi ý chuyển về Đang bán (nhưng ko bắt buộc)
+            if (statusSelect.value === "Ngừng bán") {
+                statusSelect.value = "Đang bán";
+                msg.innerText = "* Đã có hàng trở lại, tự động chuyển sang 'Đang bán'.";
+                msg.className = "text-success fst-italic";
+            } else {
+                msg.innerText = "";
+            }
+        }
+    });
+</script>

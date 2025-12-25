@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.Title = "Quên Mật Khẩu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>QUÊN MẬT KHẨU</h4>
+                </div>
+                <div class="card-body p-4">
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.Error</div>
+                    }
+                    @if (ViewBag.Success != null)
+                    {
+                        <div class="alert alert-success">@ViewBag.Success</div>
+                        <div class="text-center mt-3">
+                            <a href="@Url.Action("DangNhap", "Home")" class="btn btn-outline-primary">Quay lại Đăng nhập</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center mb-4">Vui lòng nhập email bạn đã đăng ký. Hệ thống sẽ gửi lại mật khẩu cho bạn.</p>
+
+                        using (Html.BeginForm("QuenMatKhau", "Home", FormMethod.Post))
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Email đăng ký:</label>
+                                <input type="email" name="email" class="form-control" placeholder="nhapemail@gmail.com" required />
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Gửi mật khẩu cho tôi</button>
+                                <a href="@Url.Action("DangNhap", "Home")" class="btn btn-link text-decoration-none">Hủy bỏ</a>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

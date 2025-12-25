@@ -1,0 +1,63 @@
+﻿@model IEnumerable<DoAn.Models.DonHang>
+@{
+    ViewBag.Title = "Đơn hàng của tôi";
+}
+
+<div class="container py-5">
+    <h2 class="mb-4 text-primary"><i class="fa fa-shopping-cart me-2"></i>Đơn hàng đã đặt</h2>
+
+    <div class="table-responsive bg-white shadow-sm p-4 rounded">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã Đơn</th>
+                    <th>Ngày Đặt</th>
+                    <th>Sản Phẩm</th>
+                    <th>Số Lượng</th>
+                    <th>Thanh Tiền</th>
+                    <th>Trạng Thái</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>@item.MaDon</strong></td>
+                        <td>@item.NgayDat.ToString("dd/MM/yyyy")</td>
+                        <td>@item.TenSanPham</td>
+                        <td>@item.SoLuong</td>
+                        <td class="text-danger fw-bold">@string.Format("{0:N0}", item.ThanhTien) đ</td>
+                        <td>
+                            @* Badge trạng thái *@
+                            @if (item.TrangThai == "Chờ xử lý")
+                            {<span class="badge bg-warning text-dark">Chờ xử lý</span> }
+                            else if (item.TrangThai == "Đang giao")
+                            { <span class="badge bg-info">Đang giao</span> }
+                            else if (item.TrangThai == "Đã hoàn thành")
+                            { <span class="badge bg-success">Đã hoàn thành</span> }
+                            else
+                            { <span class="badge bg-danger">Đã hủy</span>}
+                        </td>
+                        <td>
+                            @if (item.TrangThai == "Chờ xử lý")
+                            {
+                                @* Chỉ cho phép hủy khi đơn chưa được shop duyệt *@
+                                using (Html.BeginForm("CapNhatTrangThai", "QuanLy", FormMethod.Post))
+                                {
+                                    <input type="hidden" name="maDon" value="@item.MaDon" />
+                                    <input type="hidden" name="trangThaiMoi" value="Đã hủy" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">Hủy đơn</button>
+                                }
+                            }
+                            else
+                            {
+                                <small class="text-muted italic">Liên hệ shop để hỗ trợ</small>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

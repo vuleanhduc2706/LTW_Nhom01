@@ -1,0 +1,122 @@
+﻿@model IEnumerable<DoAn.Models.DonHang>
+@{
+    ViewBag.Title = "Quản lý đơn hàng";
+    var user = (DoAn.Models.NguoiDung)Session["TaiKhoan"];
+}
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">
+            <i class="fa fa-clipboard-list text-primary me-2"></i>
+            @(user.QuyenHan.Trim() == "NguoiMua" ? "Lịch sử mua hàng của bạn" : "Danh sách đơn hàng khách đặt")
+        </h2>
+
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                @TempData["Message"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="table-responsive bg-white shadow-sm p-4 rounded">
+            <table class="table table-hover border align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Mã Đơn</th>
+                        <th>Ngày Đặt</th>
+                        @if (user.QuyenHan.Trim() != "NguoiMua")
+                        {
+                            <th>Tài khoản đặt</th>
+                        }
+                        <th>Sản Phẩm</th>
+                        <th>SL</th>
+
+                        <th>Thông tin Giao Hàng</th>
+
+                        <th>Thành Tiền</th>
+                        <th>Trạng Thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><strong>@item.MaDon</strong></td>
+                            <td>@item.NgayDat.ToString("dd/MM/yyyy HH:mm")</td>
+                            @if (user.QuyenHan.Trim() != "NguoiMua")
+                            {
+                                <td>@item.KhachHang.HoTen</td>
+                            }
+                            <td>@item.TenSanPham</td>
+                            <td>@item.SoLuong</td>
+
+                            <td style="font-size: 0.9rem; min-width: 200px;">
+                                <strong><i class="fa fa-user me-1"></i> @item.TenNguoiNhan</strong><br />
+                                <i class="fa fa-phone me-1"></i> @item.SDTNguoiNhan<br />
+                                <span class="text-danger"><i class="fa fa-map-marker-alt me-1"></i> @item.DiaChiGiaoHang</span>
+                                @if (!string.IsNullOrEmpty(item.GhiChu))
+                                {
+                                    <br />
+                                    <small class="text-muted fst-italic"><i class="fa fa-sticky-note me-1"></i>Note: @item.GhiChu</small>
+                                }
+                            </td>
+
+                            <td class="text-danger fw-bold">@string.Format("{0:N0}", item.ThanhTien) đ</td>
+                            <td>
+                                @* Hiển thị Badge màu sắc cho trạng thái *@
+                                @if (item.TrangThai == "Chờ xử lý")
+                                {<span class="badge bg-warning text-dark">Chờ xử lý</span> }
+                                else if (item.TrangThai == "Đang giao")
+                                { <span class="badge bg-info text-white">Đang giao</span> }
+                                else if (item.TrangThai == "Đã hoàn thành")
+                                { <span class="badge bg-success">Đã hoàn thành</span> }
+                                else
+                                { <span class="badge bg-danger">Đã hủy</span>}
+                            </td>
+                            <td>
+                                @if (user.QuyenHan.Trim() == "NguoiMua")
+                                {
+                                    @* NGƯỜI MUA: Chỉ hiện nút Hủy nếu đang Chờ xử lý *@
+                                    if (item.TrangThai == "Chờ xử lý")
+                                    {
+                                        using (Html.BeginForm("CapNhatTrangThai", "QuanLy", FormMethod.Post))
+                                        {
+                                            <input type="hidden" name="maDon" value="@item.MaDon" />
+                                            <input type="hidden" name="trangThaiMoi" value="Đã hủy" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn có chắc muốn hủy đơn này?')">Hủy đơn</button>
+                                        }
+                                    }
+                                    else
+                                    { <small class="text-muted">Không thể can thiệp</small> }
+                                }
+                                else
+                                {
+                                    @* NGƯỜI BÁN: Hiện Select để đổi trạng thái *@
+                                    if (item.TrangThai != "Đã hoàn thành" && item.TrangThai != "Đã hủy")
+                                    {
+                                        using (Html.BeginForm("CapNhatTrangThai", "QuanLy", FormMethod.Post))
+                                        {
+                                            <input type="hidden" name="maDon" value="@item.MaDon" />
+                                            <select name="trangThaiMoi" class="form-select form-select-sm" onchange="this.form.submit()">
+                                                <option value="Chờ xử lý" @(item.TrangThai == "Chờ xử lý" ? "selected" : "")>Chờ duyệt</option>
+                                                <option value="Đang giao" @(item.TrangThai == "Đang giao" ? "selected" : "")>Đang giao</option>
+                                                <option value="Đã hoàn thành" @(item.TrangThai == "Đã hoàn thành" ? "selected" : "")>Đã giao xong</option>
+                                                <option value="Đã hủy" @(item.TrangThai == "Đã hủy" ? "selected" : "")>Hủy đơn (Hết hàng)</option>
+                                            </select>
+                                        }
+                                    }
+                                    else if (item.TrangThai == "Đã hủy")
+                                    { <small class="text-danger fw-bold">Đã hủy</small> }
+                                    else
+                                    { <small class="text-success fw-bold">Hoàn thành</small>}
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

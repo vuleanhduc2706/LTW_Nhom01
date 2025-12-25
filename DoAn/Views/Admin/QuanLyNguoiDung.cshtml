@@ -1,0 +1,90 @@
+﻿@model IEnumerable<DoAn.Models.NguoiDung>
+
+@{
+    ViewBag.Title = "Quản lý người dùng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <h2 class="mb-4"><i class="fa fa-users-cog text-primary me-2"></i>Quản lý người dùng hệ thống</h2>
+
+        <div class="table-responsive bg-white shadow-sm p-4 rounded">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Họ Tên</th>
+                        <th>Email / SĐT</th>
+                        <th>Quyền Hạn</th>
+                        <th>Trạng Thái</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="fw-bold">@item.HoTen</div>
+                                <small class="text-muted">ID: @item.MaND</small>
+                            </td>
+                            <td>
+                                <div>@item.Email</div>
+                                <div>@item.SDT</div>
+                            </td>
+                            <td>
+                                <span class="badge @(item.QuyenHan.Trim() == "NguoiBan" ? "bg-info" : "bg-secondary")">
+                                    @item.QuyenHan
+                                </span>
+                            </td>
+                            <td>
+                                @if (item.TrangThai == 1)
+                                {
+                                    <span class="text-success"><i class="fa fa-check-circle me-1"></i>Hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger"><i class="fa fa-ban me-1"></i>Đã khóa</span>
+                                }
+                            </td>
+                            <td>
+                                @* --- LOGIC XỬ LÝ NÚT BẤM --- *@
+
+                                @if (item.QuyenHan.Trim() == "NguoiBan" && item.TrangThai == 0)
+                                {
+                                    @* TRƯỜNG HỢP 1: Người bán đang chờ duyệt -> Hiện nút PheDuyet *@
+                                    using (Html.BeginForm("PheDuyet", "Admin", FormMethod.Post))
+                                    {
+                                        <input type="hidden" name="maND" value="@item.MaND" />
+                                        <button type="submit" class="btn btn-success btn-sm w-100 mb-1" onclick="return confirm('Xác nhận duyệt và tạo cửa hàng cho người này?')">
+                                            <i class="fa fa-check-circle me-1"></i> Duyệt mở Shop
+                                        </button>
+                                    }
+                                }
+
+                                @* TRƯỜNG HỢP 2: Các nút Khóa/Mở khóa thông thường *@
+                                @using (Html.BeginForm("DoiTrangThai", "Admin", FormMethod.Post))
+                                {
+                                    <input type="hidden" name="maND" value="@item.MaND" />
+
+                                    if (item.TrangThai == 1)
+                                    {
+                                        // Đang hoạt động -> Hiện nút KHÓA
+                                        <input type="hidden" name="status" value="0" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">Khóa tài khoản</button>
+                                    }
+                                    else if (!(item.QuyenHan.Trim() == "NguoiBan" && item.TrangThai == 0))
+                                    {
+                                        // Đang khóa và KHÔNG PHẢI là người bán chờ duyệt -> Hiện nút MỞ KHÓA
+                                        <input type="hidden" name="status" value="1" />
+                                        <button type="submit" class="btn btn-outline-success btn-sm w-100">Mở khóa</button>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

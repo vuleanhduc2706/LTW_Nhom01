@@ -1,0 +1,174 @@
+﻿@using DoAn.Models
+@model List<ItemGioHang>
+
+@{
+    ViewBag.Title = "Giỏ hàng của bạn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var user = Session["TaiKhoan"] as NguoiDung;
+}
+
+<div class="container py-5">
+
+    <h2 class="text-center mb-3 text-uppercase fw-bold" style="color: #2c3e50;">Giỏ hàng & Thanh toán</h2>
+
+    <div class="text-center mb-5">
+        <a href="@Url.Action("LichSuMuaHang", "GioHang")" class="btn btn-outline-primary rounded-pill px-4 py-2 shadow-sm fw-bold">
+            <i class="fa fa-history me-2"></i> Xem đơn hàng đã đặt
+        </a>
+    </div>
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm mx-auto" style="max-width: 800px;" role="alert">
+            <i class="fa fa-exclamation-triangle me-2"></i> <strong>Thông báo:</strong> @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm mx-auto" style="max-width: 800px;" role="alert">
+            <i class="fa fa-check-circle me-2"></i> <strong>Thành công:</strong> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="text-center py-5 bg-light rounded shadow-sm">
+            <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" style="width: 80px; opacity: 0.5" class="mb-3" />
+            <h5 class="text-muted fw-normal">Giỏ hàng của bạn đang trống!</h5>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-3 px-4 rounded-pill shadow-sm">
+                <i class="fa fa-arrow-left me-2"></i> Tiếp tục mua sắm
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white py-3 border-bottom-0">
+                        <h5 class="mb-0 text-primary"><i class="fa fa-shopping-cart me-2"></i>Danh sách sản phẩm (@Model.Sum(x => x.SoLuong))</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-muted small text-uppercase">
+                                <tr>
+                                    <th class="ps-4">Sản phẩm</th>
+                                    <th class="text-center">Đơn giá</th>
+                                    <th class="text-center" style="width: 120px;">Số lượng</th>
+                                    <th class="text-center">Thành tiền</th>
+                                    <th class="text-center">Xóa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <img src="~/img/@item.HinhAnh" class="rounded me-3 border" style="width: 60px; height: 60px; object-fit: cover;">
+                                                <div>
+                                                    <h6 class="mb-0 text-dark fw-bold">@item.TenSanPham</h6>
+                                                    <small class="text-muted">Mã: @item.MaSanPham</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">@string.Format("{0:N0}", item.DonGia) đ</td>
+
+                                        <td class="text-center">
+                                            @using (Html.BeginForm("CapNhatGioHang", "GioHang", FormMethod.Post))
+                                            {
+                                                <input type="hidden" name="maSP" value="@item.MaSanPham" />
+                                                <input type="number" name="sl" value="@item.SoLuong" min="1" class="form-control form-control-sm text-center d-inline-block border-secondary" style="width: 60px;" />
+                                                <button type="submit" class="btn btn-sm text-primary p-0 ms-1 fw-bold" title="Cập nhật"><i class="fa fa-sync-alt"></i></button>
+                                            }
+                                        </td>
+
+                                        <td class="text-center fw-bold text-primary">@string.Format("{0:N0}", item.ThanhTien) đ</td>
+                                        <td class="text-center">
+                                            <a href="@Url.Action("XoaGioHang", "GioHang", new { maSP = item.MaSanPham })" class="text-danger" onclick="return confirm('Xóa sản phẩm này?')">
+                                                <i class="fa fa-trash-alt fa-lg"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer bg-white border-top-0 py-3">
+                        <a href="@Url.Action("Index", "Home")" class="text-decoration-none fw-bold">
+                            <i class="fa fa-arrow-left me-1"></i> Mua thêm món khác
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm bg-light h-100">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-4 text-center">Thông tin đặt hàng</h4>
+
+                        @if (user != null)
+                        {
+                            <div class="bg-white p-3 rounded shadow-sm mb-4">
+                                <p class="mb-2 fw-bold text-uppercase small text-muted border-bottom pb-2">Người nhận</p>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fa fa-user-circle fa-lg text-secondary me-3"></i>
+                                    <div>
+                                        <div class="fw-bold">@user.HoTen</div>
+                                        <div class="small text-muted">@user.SDT</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-start">
+                                    <i class="fa fa-map-marker-alt fa-lg text-danger me-3 mt-1"></i>
+                                    <div>
+                                        @if (!string.IsNullOrEmpty(user.DiaChi))
+                                        {
+                                            <span class="text-dark">@user.DiaChi</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-danger fw-bold fst-italic">Chưa có địa chỉ!</span>
+                                            <a href="@Url.Action("ThongTinCaNhan", "Home")" class="d-block small mt-1 text-primary">Cập nhật ngay</a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @using (Html.BeginForm("DatHang", "GioHang", FormMethod.Post))
+                        {
+                            <div class="d-flex justify-content-between mb-2 text-muted">
+                                <span>Tạm tính:</span>
+                                <span>@string.Format("{0:N0}", Model.Sum(x => x.ThanhTien)) đ</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4 align-items-center">
+                                <span class="fw-bold fs-5">TỔNG CỘNG:</span>
+                                <span class="fw-bold fs-4 text-danger">@string.Format("{0:N0}", Model.Sum(x => x.ThanhTien)) đ</span>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold small">Ghi chú (Tùy chọn)</label>
+                                <textarea name="GhiChu" class="form-control" rows="2" placeholder="VD: Giao giờ hành chính..."></textarea>
+                            </div>
+
+                            if (user != null && !string.IsNullOrEmpty(user.DiaChi))
+                            {
+                                <button type="submit" class="btn btn-success w-100 py-3 fw-bold shadow text-uppercase rounded-pill">
+                                    <i class="fa fa-check-circle me-2"></i> Xác nhận đặt hàng
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-secondary w-100 py-3 rounded-pill" disabled>
+                                    <i class="fa fa-ban me-2"></i> Vui lòng cập nhật địa chỉ
+                                </button>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
